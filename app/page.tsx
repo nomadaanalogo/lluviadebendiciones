@@ -48,7 +48,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/checkout" className="btn-gold inline-flex items-center justify-center gap-3 text-lg">
                 <ShoppingBag size={22} />
-                Comprar Ahora desde $35.000
+                Comprar Ahora
               </Link>
               <Link
                 href="/producto/lluvia-de-bendiciones"

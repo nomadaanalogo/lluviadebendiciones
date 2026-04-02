@@ -1,13 +1,7 @@
 import Link from 'next/link'
 import { Check, ShoppingBag, Star } from 'lucide-react'
 import { formatCOP } from '@/lib/utils'
-
-const bundles = [
-  { qty: 1, total: 35000, label: null, badge: null },
-  { qty: 2, total: 59900, label: 'Más popular', badge: '🔥' },
-  { qty: 4, total: 79900, label: 'Más vendido', badge: '⭐' },
-  { qty: 6, total: 99900, label: 'Mejor oferta', badge: '💎' },
-]
+import { createClient } from '@/lib/supabase/server'
 
 const features = [
   'Material: Aleación de zinc bañada en oro',
@@ -15,10 +9,34 @@ const features = [
   'Incluye cadena con gancho para espejo',
   'Dimensiones: 8cm x 4cm aprox.',
   'Viene en estuche de regalo',
-  'Bendecido y consagrado individualmente',
+  'Bendecido en Buga ante el Señor de los Milagros',
 ]
 
-export default function ProductHighlight() {
+async function getBundles() {
+  try {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('bundles')
+      .select('quantity, price, label, badge')
+      .eq('active', true)
+      .eq('product_id', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890')
+      .order('quantity', { ascending: true })
+
+    if (data && data.length > 0) return data
+  } catch { /* fallback */ }
+
+  return [
+    { quantity: 1, price: 35000, label: null, badge: null },
+    { quantity: 2, price: 59900, label: 'Más popular', badge: '🔥' },
+    { quantity: 4, price: 79900, label: 'Más vendido', badge: '⭐' },
+    { quantity: 6, price: 99900, label: 'Mejor oferta', badge: '💎' },
+  ]
+}
+
+export default async function ProductHighlight() {
+  const bundles = await getBundles()
+  const basePrice = bundles[0]?.price ?? 35000
+
   return (
     <section className="py-20 bg-white" id="producto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,7 +52,6 @@ export default function ProductHighlight() {
             Protección divina en cada viaje.
           </p>
 
-          {/* Star rating */}
           <div className="flex items-center justify-center gap-2 mt-4">
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
@@ -50,7 +67,6 @@ export default function ProductHighlight() {
           {/* Product visual */}
           <div className="sticky top-24">
             <div className="relative">
-              {/* Main product image placeholder */}
               <div className="aspect-square rounded-2xl bg-gradient-to-br from-bordo-dark to-bordo flex items-center justify-center overflow-hidden shadow-bordo border border-gold/20">
                 <div className="text-center">
                   <div className="text-gold font-playfair text-8xl mb-4">✝</div>
@@ -68,7 +84,6 @@ export default function ProductHighlight() {
                 </div>
               </div>
 
-              {/* Thumbnail row */}
               <div className="flex gap-3 mt-4">
                 {[1, 2, 3].map((n) => (
                   <div
@@ -81,7 +96,6 @@ export default function ProductHighlight() {
               </div>
             </div>
 
-            {/* Features list */}
             <div className="mt-6 bg-cream rounded-xl p-5 border border-gold/15">
               <h3 className="font-playfair font-semibold text-bordo mb-3">Características</h3>
               <ul className="space-y-2">
@@ -95,23 +109,23 @@ export default function ProductHighlight() {
             </div>
           </div>
 
-          {/* Bundle picker & CTA */}
+          {/* Bundle picker */}
           <div>
             <h3 className="font-playfair text-2xl font-bold text-dark mb-6">
               Elige tu paquete y ahorra más
             </h3>
 
             <div className="space-y-3 mb-8">
-              {bundles.map(({ qty, total, label, badge }) => {
-                const perUnit = Math.round(total / qty)
-                const originalTotal = qty * 35000
-                const savings = originalTotal - total
-                const isBest = qty === 4
+              {bundles.map(({ quantity, price, label, badge }) => {
+                const perUnit = Math.round(price / quantity)
+                const originalTotal = quantity * basePrice
+                const savings = originalTotal - price
+                const isBest = quantity === 4
 
                 return (
                   <Link
-                    key={qty}
-                    href={`/checkout?qty=${qty}&bundle=true`}
+                    key={quantity}
+                    href={`/checkout?qty=${quantity}&bundle=true`}
                     className={`bundle-option block ${isBest ? 'selected' : ''} relative`}
                   >
                     {isBest && (
@@ -127,15 +141,12 @@ export default function ProductHighlight() {
 
                     <div className="flex items-center justify-between pt-2">
                       <div className="flex items-center gap-4">
-                        <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm
-                          ${isBest ? 'bg-bordo text-cream' : 'bg-gold/20 text-bordo'}`}
-                        >
-                          x{qty}
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${isBest ? 'bg-bordo text-cream' : 'bg-gold/20 text-bordo'}`}>
+                          x{quantity}
                         </div>
                         <div>
                           <p className="font-bold text-dark">
-                            {qty === 1 ? '1 Colgante' : `${qty} Colgantes`}
+                            {quantity === 1 ? '1 Colgante' : `${quantity} Colgantes`}
                           </p>
                           <p className="text-dark/50 text-sm">
                             {formatCOP(perUnit)} c/u
@@ -154,7 +165,7 @@ export default function ProductHighlight() {
                           </p>
                         )}
                         <p className={`font-bold text-xl ${isBest ? 'text-bordo' : 'text-dark'}`}>
-                          {formatCOP(total)}
+                          {formatCOP(price)}
                         </p>
                       </div>
                     </div>

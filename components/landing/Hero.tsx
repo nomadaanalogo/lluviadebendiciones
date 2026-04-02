@@ -1,7 +1,30 @@
 import Link from 'next/link'
 import { ShoppingBag, Star, Shield, Truck } from 'lucide-react'
+import { formatCOP } from '@/lib/utils'
+import { createClient } from '@/lib/supabase/server'
 
-export default function Hero() {
+async function getPrices() {
+  try {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('bundles')
+      .select('quantity, price')
+      .eq('active', true)
+      .eq('product_id', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890')
+      .order('quantity', { ascending: true })
+    if (data && data.length > 0) return data
+  } catch { /* fallback */ }
+  return [
+    { quantity: 1, price: 35000 },
+    { quantity: 4, price: 79900 },
+  ]
+}
+
+export default async function Hero() {
+  const prices = await getPrices()
+  const single = prices.find((p) => p.quantity === 1) ?? prices[0]
+  const pack4 = prices.find((p) => p.quantity === 4) ?? prices[prices.length - 1]
+  const savings4 = single.price * pack4.quantity - pack4.price
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-white">
       {/* Background decorative elements */}
@@ -64,13 +87,15 @@ export default function Hero() {
             <div className="flex items-center gap-4 mb-8">
               <div>
                 <p className="text-dark/50 text-sm">Desde solo</p>
-                <p className="text-3xl font-bold text-gold">$35.000 COP</p>
+                <p className="text-3xl font-bold text-gold">{formatCOP(single.price)}</p>
               </div>
               <div className="h-12 w-px bg-bordo/15" />
               <div>
-                <p className="text-dark/50 text-sm">Pack de 4 por</p>
-                <p className="text-3xl font-bold text-gold">$79.900 COP</p>
-                <p className="text-green-600 text-xs font-semibold">Ahorras $60.100</p>
+                <p className="text-dark/50 text-sm">Pack de {pack4.quantity} por</p>
+                <p className="text-3xl font-bold text-gold">{formatCOP(pack4.price)}</p>
+                {savings4 > 0 && (
+                  <p className="text-green-600 text-xs font-semibold">Ahorras {formatCOP(savings4)}</p>
+                )}
               </div>
             </div>
 
