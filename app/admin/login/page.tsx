@@ -29,12 +29,12 @@ function LoginForm() {
       })
 
       if (authError) {
-        setError('Correo o contraseña incorrectos. Verifica tus datos.')
+        setError(`Error: ${authError.message}`)
         return
       }
 
-      router.push(redirectTo)
-      router.refresh()
+      // Navegación dura para asegurar que la cookie de sesión esté disponible
+      window.location.href = redirectTo
     } catch {
       setError('Error al iniciar sesión. Intenta de nuevo.')
     } finally {
