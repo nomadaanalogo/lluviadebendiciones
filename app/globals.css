@@ -1,0 +1,249 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Lato:wght@300;400;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bordo: #8B1E2E;
+  --bordo-dark: #6B1520;
+  --bordo-light: #A8293C;
+  --gold: #C9A84C;
+  --gold-light: #E8C96A;
+  --gold-dark: #A8883A;
+  --cream: #FAF8F5;
+  --dark: #1A0A0F;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--dark);
+  font-family: 'Lato', Inter, sans-serif;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5 {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+}
+
+@layer components {
+  /* Gold shimmer button */
+  .btn-gold {
+    @apply relative overflow-hidden bg-gold text-dark font-bold px-8 py-4 rounded-lg transition-all duration-300;
+    background: linear-gradient(90deg, #C9A84C 0%, #E8C96A 50%, #C9A84C 100%);
+    background-size: 200% auto;
+    box-shadow: 0 4px 15px rgba(201, 168, 76, 0.4);
+  }
+  .btn-gold:hover {
+    background-position: right center;
+    box-shadow: 0 6px 25px rgba(201, 168, 76, 0.6);
+    transform: translateY(-2px);
+  }
+
+  /* Bordo button */
+  .btn-bordo {
+    @apply bg-bordo text-white font-bold px-8 py-4 rounded-lg transition-all duration-300;
+    box-shadow: 0 4px 15px rgba(139, 30, 46, 0.3);
+  }
+  .btn-bordo:hover {
+    @apply bg-bordo-light;
+    box-shadow: 0 6px 25px rgba(139, 30, 46, 0.5);
+    transform: translateY(-2px);
+  }
+
+  /* Gold divider */
+  .gold-divider {
+    @apply flex items-center justify-center gap-3 my-4;
+    color: var(--gold);
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+  }
+  .gold-divider::before,
+  .gold-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* Section with cross pattern */
+  .bg-cross-pattern {
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(201,168,76,0.08) 1px, transparent 0);
+    background-size: 30px 30px;
+  }
+
+  /* Glass card */
+  .glass-card {
+    @apply rounded-2xl border;
+    background: rgba(250, 248, 245, 0.95);
+    border-color: rgba(201, 168, 76, 0.2);
+    box-shadow: 0 8px 32px rgba(26, 10, 15, 0.1);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Product card hover */
+  .product-card {
+    @apply transition-all duration-300 cursor-pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(139, 30, 46, 0.2);
+  }
+
+  /* Bundle option */
+  .bundle-option {
+    @apply border-2 rounded-xl p-4 cursor-pointer transition-all duration-200;
+    border-color: rgba(201, 168, 76, 0.3);
+  }
+  .bundle-option:hover {
+    border-color: var(--gold);
+    background: rgba(201, 168, 76, 0.05);
+  }
+  .bundle-option.selected {
+    border-color: var(--bordo);
+    background: rgba(139, 30, 46, 0.05);
+    box-shadow: 0 0 0 3px rgba(139, 30, 46, 0.15);
+  }
+
+  /* Star rating */
+  .star-filled {
+    color: var(--gold);
+  }
+  .star-empty {
+    color: #ddd;
+  }
+
+  /* Order status badges */
+  .status-pendiente {
+    @apply bg-yellow-100 text-yellow-800 border border-yellow-200;
+  }
+  .status-confirmado {
+    @apply bg-blue-100 text-blue-800 border border-blue-200;
+  }
+  .status-despachado {
+    @apply bg-purple-100 text-purple-800 border border-purple-200;
+  }
+  .status-entregado {
+    @apply bg-green-100 text-green-800 border border-green-200;
+  }
+  .status-cancelado {
+    @apply bg-red-100 text-red-800 border border-red-200;
+  }
+
+  /* Admin sidebar */
+  .admin-nav-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium;
+  }
+  .admin-nav-link:hover {
+    background: rgba(201, 168, 76, 0.1);
+    color: var(--gold);
+  }
+  .admin-nav-link.active {
+    background: rgba(201, 168, 76, 0.15);
+    color: var(--gold);
+    border-left: 3px solid var(--gold);
+  }
+
+  /* Kanban column */
+  .kanban-column {
+    @apply rounded-xl p-4 min-h-64;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(201, 168, 76, 0.15);
+  }
+
+  /* Form inputs */
+  .form-input {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-200 bg-white text-dark
+           focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200;
+    focus-ring-color: var(--bordo);
+  }
+  .form-input:focus {
+    ring-color: var(--bordo);
+    border-color: var(--bordo);
+    box-shadow: 0 0 0 3px rgba(139, 30, 46, 0.1);
+  }
+
+  .form-label {
+    @apply block text-sm font-semibold text-dark mb-1;
+  }
+
+  /* Shimmer loading */
+  .shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #C9A84C, #E8C96A, #C9A84C);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .border-gradient-gold {
+    border-image: linear-gradient(90deg, transparent, #C9A84C, transparent) 1;
+  }
+
+  .shadow-gold {
+    box-shadow: 0 4px 20px rgba(201, 168, 76, 0.3);
+  }
+
+  .shadow-bordo {
+    box-shadow: 0 4px 20px rgba(139, 30, 46, 0.3);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(201, 168, 76, 0.5), 0 0 40px rgba(201, 168, 76, 0.2);
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bordo);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bordo-light);
+}
+
+/* WhatsApp button animation */
+@keyframes whatsapp-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+.whatsapp-pulse {
+  animation: whatsapp-pulse 2s infinite;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
